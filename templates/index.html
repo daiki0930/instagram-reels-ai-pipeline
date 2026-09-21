@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}承認待ち一覧{% endblock %}
+{% block content %}
+<section class="panel">
+  <h1>Reel候補を登録</h1>
+  <form method="post" action="{{ url_for('create_job') }}">
+    <label>公開動画URL<input name="video_url" type="url" required placeholder="https://..."></label>
+    <label>キャプション<textarea name="caption" required rows="5"></textarea></label>
+    <label class="check"><input name="is_ai_generated" type="checkbox"> AI生成コンテンツ</label>
+    <button type="submit">下書きを保存</button>
+  </form>
+</section>
+<section>
+  <h2>最近のジョブ</h2>
+  <div class="jobs">
+  {% for job in jobs %}
+    <a class="job" href="{{ url_for('job_detail', job_id=job.id) }}">
+      <strong>#{{ job.id }}</strong>
+      <span>{{ job.container_status or 'DRAFT' }}</span>
+      <p>{{ job.caption[:100] }}</p>
+    </a>
+  {% else %}<p>まだ候補はありません。</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}
