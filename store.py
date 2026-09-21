@@ -58,6 +58,13 @@ class JobStore:
             raise KeyError(f"Job {job_id} not found")
         return dict(row)
 
+    def list_recent(self, limit: int = 50) -> list[dict[str, Any]]:
+        with self._connect() as con:
+            rows = con.execute(
+                "SELECT * FROM reel_jobs ORDER BY id DESC LIMIT ?", (limit,)
+            ).fetchall()
+        return [dict(row) for row in rows]
+
     def update(self, job_id: int, **fields: Any) -> None:
         allowed = {
             "container_id", "container_status", "approved_at", "media_id",
@@ -76,4 +83,3 @@ class JobStore:
                 f"UPDATE reel_jobs SET {assignments} WHERE id = ?",
                 (*values.values(), job_id),
             )
-
