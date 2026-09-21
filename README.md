@@ -58,6 +58,14 @@ python cli.py show 1
 python cli.py publish 1 --approval "PUBLISH THIS REEL"
 ```
 
+## 承認Web画面
+
+```powershell
+python app.py
+```
+
+`http://127.0.0.1:5000` を開くと、候補登録、動画プレビュー、コンテナ作成、状態確認、最終承認ができます。公開ボタンはコンテナが `FINISHED` の場合だけ表示され、チェックボックスとジョブ固有の確認文字列 `PUBLISH <job_id>` の両方を要求します。公開直前にもAPIから状態を再取得します。
+
 Veo動画では `create` に `--ai-generated` を付けます。最初の疎通確認は、自作した短い9:16 MP4で構いません。
 
 ## URL要件とStorage
