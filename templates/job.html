@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}ジョブ #{{ job.id }}{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="headline"><h1>ジョブ #{{ job.id }}</h1><span class="status">{{ job.container_status or 'DRAFT' }}</span></div>
+  <video controls preload="metadata" src="{{ job.video_url }}"></video>
+  <h2>キャプション</h2><pre>{{ job.caption }}</pre>
+  <dl>
+    <dt>動画URL</dt><dd><a href="{{ job.video_url }}" target="_blank" rel="noreferrer">{{ job.video_url }}</a></dd>
+    <dt>AI生成</dt><dd>{{ 'はい' if job.is_ai_generated else 'いいえ' }}</dd>
+    <dt>Container ID</dt><dd>{{ job.container_id or '未作成' }}</dd>
+    <dt>公開URL</dt><dd>{% if job.permalink %}<a href="{{ job.permalink }}">{{ job.permalink }}</a>{% else %}未公開{% endif %}</dd>
+  </dl>
+</section>
+<section class="actions">
+  {% if not job.container_id %}
+  <form method="post" action="{{ url_for('create_container', job_id=job.id) }}"><button>非公開コンテナを作成</button></form>
+  {% else %}
+  <form method="post" action="{{ url_for('refresh_status', job_id=job.id) }}"><button class="secondary">状態を更新</button></form>
+  {% endif %}
+</section>
+{% if job.container_status == 'FINISHED' %}
+<section class="danger panel">
+  <h2>最終公開承認</h2>
+  <p>この操作後、Instagram上でReelが公開されます。</p>
+  <form method="post" action="{{ url_for('publish', job_id=job.id) }}">
+    <label class="check"><input type="checkbox" name="confirmed"> 動画・キャプション・投稿先を確認した</label>
+    <label>確認文字列<input name="approval" autocomplete="off" placeholder="PUBLISH {{ job.id }}"></label>
+    <button class="publish">Instagramへ公開</button>
+  </form>
+</section>
+{% endif %}
+{% endblock %}
